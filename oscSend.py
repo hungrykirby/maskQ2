@@ -3,6 +3,7 @@ from pythonosc import osc_message_builder
 from pythonosc import udp_client
 
 import face2data
+from Config import config
 
 osc_type = input("raw osc(r), face osc(f) or no osc(n)")
 
@@ -18,7 +19,7 @@ args = parser.parse_args()
 
 client = udp_client.UDPClient(args.ip, args.port)
 
-def send(predict):
+def send(predict=0):
     if osc_type == "n":
         print("predict + no osc", predict)
         return
@@ -26,6 +27,12 @@ def send(predict):
         print("predict + send predict osc", predict)
         msg = osc_message_builder.OscMessageBuilder(address="/predict")
         msg.add_arg(predict)
+        msg = msg.build()
+        client.send(msg)
+    elif osc_type == "t": # Train
+        msg = osc_message_builder.OscMessageBuilder(address="/key_send")
+        print("Send : ", config.console_input_number)
+        msg.add_arg(int(config.console_input_number))
         msg = msg.build()
         client.send(msg)
     elif osc_type == "f":

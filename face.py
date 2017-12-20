@@ -16,10 +16,11 @@ class Face(arrange.Arrange):
         self.sensor_nums = sensor_nums
         self.mode = mode
 
-        self.pattern = {"train": 10, "test":6, "raw": 1000, "num_learn": 2}
+        self.pattern = {"train": 10, "test":10, "other":10, "raw": 1000, "num_learn": 1}
         #self.pattern = {"train": 250, "test":100, "raw": 1000, "other": 10}
 
     def fetch_numbers(self, matched_group):
+        #print(matched_group)
         is_calibration = config.is_calibration
         console_input_number = config.console_input_number
 
@@ -31,7 +32,10 @@ class Face(arrange.Arrange):
             self.pre_console_input_number = console_input_number
             self.count = 0
             self.count2 = 0 #????
-            fn = os.path.join(os.getcwd(), self.mode, console_input_number)
+            if self.mode != "other":
+                fn = os.path.join(os.getcwd(), self.mode, console_input_number)
+            else:
+                fn = os.path.join(os.getcwd(), config.username, console_input_number)
             if not os.path.exists(fn):
                 if console_input_number != "1025":
                     os.makedirs(fn)
@@ -56,6 +60,7 @@ class Face(arrange.Arrange):
             if is_calibration:
                 is_calibration = Calibrate.start_calibration(is_calibration, np.array(self.result_list_nums).astype(np.int64))
 
+            #print(self.count, self.pattern[self.mode], console_input_number)
             if self.count < self.pattern[self.mode] and console_input_number.isdigit():
                 if self.count2 < self.pattern["num_learn"]:
                     result_list = np.array(self.result_list_nums).astype(np.int64) - self.calibration_numbers

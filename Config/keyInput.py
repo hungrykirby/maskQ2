@@ -1,6 +1,7 @@
 import sys
 
 from Config import config
+import oscSend
 
 def key_input():
     while True:
@@ -14,8 +15,9 @@ def key_input():
             config.is_calibration = True
         elif console_input == "f":
             sys.exit()
-        elif console_input != config.console_input_number:
+        elif console_input.isdigit():
             config.console_input_number = console_input
+            oscSend.send()
             print("c =", config.console_input_number)
         else:
             print("else")
